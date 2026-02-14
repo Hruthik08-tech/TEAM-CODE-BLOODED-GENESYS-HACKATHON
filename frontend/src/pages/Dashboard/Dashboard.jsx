@@ -1,34 +1,40 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useActivity } from '../../context/activityContext.jsx';
 import './Dashboard.css';
 
 const Dashboard = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     const orgName = user?.org_name || 'My Organisation';
+    const { stats, recentActivity, loading, error } = useActivity();
 
-    const stats = [
-        { label: 'Active Supplies', value: 12, color: '#2364AA', icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        )},
-        { label: 'Active Demands', value: 8, color: '#EA7317', icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14l2 2 4-4"/></svg>
-        )},
-        { label: 'Pending Requests', value: 5, color: '#73BFB8', icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        )},
-        { label: 'Active Deals', value: 3, color: '#2f855a', icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-        )},
-    ];
-
-    const recentActivity = [
-        { id: 1, type: 'request', title: 'New request from Alpha Logistics', time: '5 min ago', desc: 'For Medical Masks (N95)' },
-        { id: 2, type: 'match', title: '3 new matches found', time: '1 hour ago', desc: 'For Emergency Response Kits' },
-        { id: 3, type: 'room', title: 'Message in Business Room', time: '2 hours ago', desc: 'Eco Shelters sent a new proposal' },
-        { id: 4, type: 'deal', title: 'Deal #DEAL-5033 finalised', time: '6 hours ago', desc: 'Heavy Duty Shipping Crates' },
-        { id: 5, type: 'request', title: 'Request accepted by Global Aid', time: '1 day ago', desc: 'Emergency Medical Kits' },
+    const statsDisplay = [
+        { 
+            label: 'Active Supplies', 
+            value: stats?.activeSupplies || 0, 
+            color: '#2364AA',
+            icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        },
+        { 
+            label: 'Active Demands', 
+            value: stats?.activeDemands || 0, 
+            color: '#EA7317',
+            icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 15h2"/><path d="M12 9v6"/><circle cx="12" cy="12" r="10"/></svg>
+        },
+        { 
+            label: 'Pending Requests', 
+            value: stats?.pendingRequests || 0, 
+            color: '#73BFB8',
+            icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
+        },
+        { 
+            label: 'Active Deals', 
+            value: stats?.activeDeals || 0, 
+            color: '#2f855a',
+            icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+        },
     ];
 
     const quickActions = [
@@ -46,6 +52,24 @@ const Dashboard = () => {
         )},
     ];
 
+    const timeAgo = (date) => {
+        const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + "y ago";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + "mo ago";
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + "d ago";
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + "h ago";
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + "m ago";
+        return "now";
+    };
+
+    if (loading) return <div className="dashboard-loading">Loading your dashboard...</div>;
+    if (error) return <div className="dashboard-error">Error loading dashboard: {error.message}</div>;
+
     return (
         <div className="dashboard-page">
             <div className="dashboard-welcome">
@@ -57,7 +81,7 @@ const Dashboard = () => {
 
             {/* Stats */}
             <div className="dashboard-stats-grid">
-                {stats.map((stat, i) => (
+                {statsDisplay.map((stat, i) => (   
                     <div key={i} className="stat-card" style={{ '--stat-color': stat.color }}>
                         <div className="stat-icon-wrapper">
                             {stat.icon}
@@ -76,16 +100,20 @@ const Dashboard = () => {
                 <div className="dashboard-card activity-card">
                     <h3 className="card-title">Recent Activity</h3>
                     <div className="activity-list">
-                        {recentActivity.map(item => (
-                            <div key={item.id} className="activity-item">
-                                <div className={`activity-dot dot-${item.type}`} />
-                                <div className="activity-content">
-                                    <span className="activity-title">{item.title}</span>
-                                    <span className="activity-desc">{item.desc}</span>
+                        {recentActivity && recentActivity.length > 0 ? (
+                            recentActivity.map(item => (
+                                <div key={item.id} className="activity-item">
+                                    <div className={`activity-dot dot-${item.type}`} />
+                                    <div className="activity-content">
+                                        <span className="activity-title">{item.title}</span>
+                                        <span className="activity-desc">{item.desc}</span>
+                                    </div>
+                                    <span className="activity-time">{timeAgo(item.time)}</span>
                                 </div>
-                                <span className="activity-time">{item.time}</span>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p className="no-activity">No recent activity found.</p>
+                        )}
                     </div>
                 </div>
 

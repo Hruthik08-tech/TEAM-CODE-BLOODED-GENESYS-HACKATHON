@@ -2,14 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change_me_in_production';
 
-/**
- * Express middleware that validates a Bearer JWT token.
- *
- * On success it attaches the decoded payload to `req.user`
- * (contains `org_id` and `org_name`).
- *
- * On failure it returns 401 (missing / malformed) or 403 (expired / invalid).
- */
+
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // "Bearer <token>"

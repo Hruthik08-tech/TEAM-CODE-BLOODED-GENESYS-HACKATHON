@@ -1,51 +1,14 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../../utils/api';
 import './Supply.css';
 
 const Supply = () => {
     const navigate = useNavigate();
-    const [supplies, setSupplies] = useState([
-        {
-            uuid: 'SUP-4921-X82',
-            name: 'Medical Masks (N95)',
-            category: 'Healthcare',
-            status: 'active',
-            price: 2.50,
-            quantity: 500,
-            quantityUnit: 'pieces',
-            description: 'High-grade N95 masks for emergency response teams.'
-        },
-        {
-            uuid: 'SUP-7732-Q10',
-            name: 'Energy Bars (Crate)',
-            category: 'Food & Water',
-            status: 'completed',
-            price: 45.00,
-            quantity: 20,
-            quantityUnit: 'crates',
-            description: 'Pack of 50 high-calorie energy bars for field workers.'
-        },
-        {
-            uuid: 'SUP-2105-B44',
-            name: 'Portable Water Filters',
-            category: 'Sanitation',
-            status: 'pending',
-            price: 12.00,
-            quantity: 100,
-            quantityUnit: 'units',
-            description: 'Individual water filtration units for disaster zones.'
-        },
-        {
-            uuid: 'SUP-9981-L90',
-            name: 'Thermal Blankets',
-            category: 'Shelter',
-            status: 'active',
-            price: 8.50,
-            quantity: 250,
-            quantityUnit: 'pieces',
-            description: 'Emergency space blankets for cold weather protection.'
-        }, 
-    ]);
+    const [supplies, setSupplies] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [isLoadingSupplies, setIsLoadingSupplies] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Filter and Sort States
     const [searchQuery, setSearchQuery] = useState('');
@@ -61,12 +24,54 @@ const Supply = () => {
         currency: 'USD',
         quantity: '',
         quantityUnit: '',
+        searchRadius: 50,
         expiryDate: '',
         supplierName: '',
         supplierContact: '',
         supplierEmail: '',
         description: ''
     });
+
+    // Fetch supplies from API on mount
+    useEffect(() => {
+        fetchSupplies();
+        fetchCategories();
+    }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const data = await api.get('/categories');
+            if (Array.isArray(data)) {
+                setCategories(data.map(c => c.category_name));
+            }
+        } catch (err) {
+            console.error('Failed to fetch categories:', err);
+        }
+    };
+
+    const fetchSupplies = async () => {
+        setIsLoadingSupplies(true);
+        try {
+            const data = await api.get('/supply');
+            setSupplies(data.map(s => ({
+                supplyId: s.supply_id,
+                uuid: `SUP-${s.supply_id}`,
+                name: s.item_name,
+                category: s.item_category,
+                status: s.is_active ? 'active' : 'inactive',
+                price: parseFloat(s.price_per_unit) || 0,
+                currency: s.currency || 'USD',
+                quantity: s.quantity || 0,
+                quantityUnit: s.quantity_unit || '',
+                searchRadius: s.search_radius || 50,
+                description: s.item_description || ''
+            })));
+        } catch (err) {
+            console.error('Failed to fetch supplies:', err);
+        } finally {
+            setIsLoadingSupplies(false);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -76,44 +81,45 @@ const Supply = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const newSupply = {
-            uuid: `SUP-${Math.floor(1000 + Math.random() * 9000)}-${Math.random().toString(36).substring(2, 5).toUpperCase()}`,
-            name: formData.name,
-            category: formData.category,
-            status: 'pending',
-            price: parseFloat(formData.price),
-            currency: formData.currency,
-            quantity: parseFloat(formData.quantity),
-            quantityUnit: formData.quantityUnit,
-            expiryDate: formData.expiryDate,
-            supplierName: formData.supplierName,
-            supplierContact: formData.supplierContact,
-            supplierEmail: formData.supplierEmail,
-            description: formData.description
-        };
-        setSupplies([newSupply, ...supplies]);
-        setFormData({ 
-            name: '', 
-            category: '', 
-            price: '', 
-            currency: 'USD', 
-            quantity: '', 
-            quantityUnit: '', 
-            expiryDate: '',
-            supplierName: '',
-            supplierContact: '',
-            supplierEmail: '',
-            description: '' 
-        });
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                item_name: formData.name,
+                item_category: formData.category,
+                item_description: formData.description,
+                price_per_unit: parseFloat(formData.price) || null,
+                currency: formData.currency,
+                quantity: parseFloat(formData.quantity) || null,
+                quantity_unit: formData.quantityUnit,
+                search_radius: parseFloat(formData.searchRadius) || 50,
+                expiry_date: formData.expiryDate || null,
+                supplier_name: formData.supplierName || null,
+                supplier_contact: formData.supplierContact || null,
+                supplier_email: formData.supplierEmail || null,
+            };
+            await api.post('/supply', payload);
+            setFormData({
+                name: '', category: '', price: '', currency: 'USD',
+                quantity: '', quantityUnit: '', searchRadius: 50,
+                expiryDate: '', supplierName: '', supplierContact: '',
+                supplierEmail: '', description: ''
+            });
+            fetchSupplies(); // Refresh list
+        } catch (err) {
+            console.error('Failed to create supply:', err);
+            alert('Failed to create supply. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     // Filter and Sort Logic
     const getFilteredAndSortedSupplies = () => {
         let filtered = supplies.filter(supply => {
-            const matchesSearch = supply.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                 supply.category.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesSearch = (supply.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                 (supply.category || '').toLowerCase().includes(searchQuery.toLowerCase());
             const matchesStatus = filterStatus === 'all' || supply.status === filterStatus;
             const matchesCategory = filterCategory === 'all' || supply.category === filterCategory;
             return matchesSearch && matchesStatus && matchesCategory;
@@ -215,7 +221,13 @@ const Supply = () => {
                                     </div>
                                     <div className="detail-item">
                                         <span className="detail-label">Unit Price</span>
-                                        <span className="detail-value">${supply.price.toFixed(2)}</span>
+                                        <span className="detail-value">
+                                            {{
+                                                'USD': '$', 'INR': '₹', 'EUR': '€', 'GBP': '£', 
+                                                'JPY': '¥', 'AUD': 'A$', 'CAD': 'C$'
+                                            }[supply.currency] || supply.currency} 
+                                            {(Number(supply.price) || 0).toFixed(2)}
+                                        </span>
                                     </div>
                                     <div className="detail-item">
                                         <span className="detail-label">Quantity</span>
@@ -226,14 +238,21 @@ const Supply = () => {
                                 <div className="item-card-actions">
                                     <button 
                                         className="match-btn"
-                                        onClick={() => navigate(`/match-results?type=supply&id=${supply.uuid}`)}
+                                        onClick={() => navigate(`/supply/${supply.supplyId}/match-map`)}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                                         Find Matching Demands
                                     </button>
                                     <button 
                                         className="delete-item-btn"
-                                        onClick={() => setSupplies(supplies.filter(s => s.uuid !== supply.uuid))}
+                                        onClick={async () => {
+                                            try {
+                                                await api.delete(`/supply/${supply.supplyId}`);
+                                                fetchSupplies();
+                                            } catch (err) {
+                                                console.error('Failed to delete supply:', err);
+                                            }
+                                        }}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                     </button>
@@ -266,15 +285,18 @@ const Supply = () => {
 
                             <div className="input-group">
                                 <label className="input-label">Item Category</label>
-                                <input 
-                                    type="text" 
+                                <select 
                                     name="category" 
-                                    placeholder="e.g. Energy"
                                     className="styled-input"
                                     value={formData.category}
                                     onChange={handleInputChange}
                                     required
-                                />
+                                >
+                                    <option value="" disabled>Select a category...</option>
+                                    {categories.map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="input-row">
@@ -345,6 +367,35 @@ const Supply = () => {
                                         <option value="crates">Crates</option>
                                     </select>
                                 </div>
+                            </div>
+
+                            <div className="input-group radius-input-group">
+                                <label className="input-label">
+                                    Search Radius
+                                    <span className="radius-value-badge">{formData.searchRadius} km</span>
+                                </label>
+                                <div className="radius-control">
+                                    <input 
+                                        type="range" 
+                                        name="searchRadius" 
+                                        min="5" 
+                                        max="500" 
+                                        step="5"
+                                        className="radius-slider"
+                                        value={formData.searchRadius}
+                                        onChange={handleInputChange}
+                                    />
+                                    <input 
+                                        type="number" 
+                                        name="searchRadius" 
+                                        min="5" 
+                                        max="500"
+                                        className="styled-input radius-number"
+                                        value={formData.searchRadius}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                                <span className="radius-hint">How far to search for matching demands</span>
                             </div>
 
                             <div className="input-group">
@@ -436,9 +487,9 @@ const Supply = () => {
                             </div>
                         </div>
                         <div className="supply-btn-container">
-                            <button type="submit" className="submit-btn">
+                            <button type="submit" className="submit-btn" disabled={isSubmitting}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                                Register Supply
+                                {isSubmitting ? 'Creating...' : 'Register Supply'}
                             </button>
                         </div> 
                     </form>

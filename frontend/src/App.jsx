@@ -33,18 +33,20 @@ const AppRoutes = () => {
   const location = useLocation();
 
   // Public pages that do NOT use AppLayout
-  const publicPaths = ['/login', '/register', '/verify', '/map'];
-  const isPublic = publicPaths.some(p => location.pathname.startsWith(p));
+  const simplePublicPaths = ['/login', '/register', '/verify', '/map'];
+  const isMatchMapRoute = /^\/supply\/\d+\/match-map/.test(location.pathname);
+  const isPublic = simplePublicPaths.some(p => location.pathname.startsWith(p)) || isMatchMapRoute;
 
   if (isPublic) {
     return (
       <>
-        {location.pathname === '/map' && <NavBar />}
+        {(location.pathname === '/map' || location.pathname.includes('/match-map')) && <NavBar />}
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/map" element={<Map />} />
+          <Route path="/supply/:supplyId/match-map" element={<Map />} />
         </Routes>
       </>
     );

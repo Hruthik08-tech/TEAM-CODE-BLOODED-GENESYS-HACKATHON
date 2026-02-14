@@ -43,11 +43,11 @@ export const AuthProvider = ({ children }) => {
     return () => { cancelled = true; };
   }, [token]);
 
-  // ── Login ───────────────────────────────────
+  // login
   const login = async (email, password) => {
     const data = await api.post('/auth/login', { email, password });
     setToken(data.token);
-    // Store basic info immediately so components can read it
+    // store basic info immediately so components can read it
     // before the /me fetch completes
     localStorage.setItem('org_name', data.org_name);
     localStorage.setItem('org_id', data.org_id);
@@ -55,13 +55,13 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
-  // ── Register ────────────────────────────────
+  // register
   const register = async (formData) => {
     const data = await api.post('/auth/register', formData);
     return data;
   };
 
-  // ── Logout ──────────────────────────────────
+  // logout
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('org_id');
   };
 
-  // ── Refresh profile (call after profile edits) ──
+  // refresh profile (call after profile edits)
   const refreshProfile = async () => {
     try {
       const data = await api.get('/auth/me');

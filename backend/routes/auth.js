@@ -1,18 +1,16 @@
-const express           = require('express');
-const bcrypt            = require('bcrypt');
-const jwt               = require('jsonwebtoken');
-const pool              = require('../connections/db');
+const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const pool = require('../connections/db');
 const authenticateToken = require('../middleware/authenticateToken');
 
-const router   = express.Router();
+const router = express.Router();
 
 const JWT_SECRET  = process.env.JWT_SECRET  || 'change_me_in_production';
 const JWT_EXPIRY  = process.env.JWT_EXPIRY  || '24h';
 const BCRYPT_COST = 12;
 
-// ─────────────────────────────────────────────
-//  POST /api/auth/register
-// ─────────────────────────────────────────────
+// post: api/auth/register
 router.post('/register', async (req, res) => {
   try {
     const {
@@ -29,7 +27,7 @@ router.post('/register', async (req, res) => {
       longitude,
     } = req.body;
 
-    // ── Validate required fields ────────────────────────────
+    // validate required fields
     if (
       !org_name || !email || !password || !phone_number ||
       !address  || !city  || !state    || !country      ||
@@ -40,7 +38,7 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // ── Check for duplicate email ───────────────────────────
+    // check for duplicate email
     const [existing] = await pool.query(
       'SELECT org_id FROM organisation WHERE email = ?',
       [email],
@@ -49,10 +47,10 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ error: 'An organisation with this email already exists.' });
     }
 
-    // ── Hash password with bcrypt (cost 12) ─────────────────
+    // hash password with bcrypt (cost 12)
     const password_hash = await bcrypt.hash(password, BCRYPT_COST);
 
-    // ── Insert new organisation ─────────────────────────────
+    // insert new organisation
     const [result] = await pool.query(
       `INSERT INTO organisation
          (org_name, email, password_hash, phone_number,
@@ -76,9 +74,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────
-//  POST /api/auth/login
-// ─────────────────────────────────────────────
+// post: api/auth/login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -87,7 +83,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required.' });
     }
 
-    // ── Look up organisation by email ───────────────────────
+    // look up organisation by email
     const [rows] = await pool.query(
       'SELECT org_id, org_name, password_hash FROM organisation WHERE email = ?',
       [email],
@@ -98,13 +94,13 @@ router.post('/login', async (req, res) => {
 
     const org = rows[0];
 
-    // ── Verify password ─────────────────────────────────────
+    // verify password
     const isMatch = await bcrypt.compare(password, org.password_hash);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
-    // ── Sign JWT (24‑hour expiry) ───────────────────────────
+    // sign JWT (24‑hour expiry)
     const token = jwt.sign(
       { org_id: org.org_id, org_name: org.org_name },
       JWT_SECRET,
@@ -123,9 +119,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────
-//  GET /api/auth/me  (protected)
-// ─────────────────────────────────────────────
+// get: api/auth/me  (protected)
 router.get('/me', authenticateToken, async (req, res) => {
   try {
     const [rows] = await pool.query(

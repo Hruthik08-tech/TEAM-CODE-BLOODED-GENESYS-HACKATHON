@@ -222,6 +222,31 @@
     color: var(--color-text);
 }
 
+/* UI Feedback */
+.dashboard-loading,
+.dashboard-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    font-family: var(--font-sans);
+}
+
+.dashboard-error {
+    color: #e53e3e;
+}
+
+.no-activity {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--color-text-light);
+    font-size: 14px;
+    font-style: italic;
+}
+
 @media (max-width: 1024px) {
     .dashboard-stats-grid { grid-template-columns: 1fr 1fr; }
     .dashboard-main-grid { grid-template-columns: 1fr; }

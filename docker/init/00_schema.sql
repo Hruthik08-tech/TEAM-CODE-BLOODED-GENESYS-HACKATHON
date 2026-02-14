@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `org_supply` (
     `quantity` INT NOT NULL,
     `quantity_unit` VARCHAR(50) NOT NULL,
     `min_order_qty` INT DEFAULT 1,
+    `search_radius` DECIMAL(8, 2) DEFAULT 50.00,
     `expiry_date` DATE,
     `location_label` VARCHAR(255),
     `image_url` VARCHAR(500),
