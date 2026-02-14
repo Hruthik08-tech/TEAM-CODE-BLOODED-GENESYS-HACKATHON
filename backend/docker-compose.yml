@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # API Service
+  api:
+    build: ./backend
+    container_name: waste_exchange_api
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=waste_exchange
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./backend:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - waste_exchange_network
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: waste_exchange_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=waste_exchange
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - waste_exchange_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: waste_exchange_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - waste_exchange_network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+
+networks:
+  waste_exchange_network:
+    driver: bridge
