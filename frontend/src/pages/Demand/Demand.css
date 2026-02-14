@@ -1,0 +1,164 @@
+/* ============================================================
+   Demand Page — Mirrors Supply.css exactly with demand-specific names
+   ============================================================ */
+
+.demand-page-wrapper {
+    width: 100%;
+    /* Background handled by AppLayout */
+    /* Padding handled by AppLayout (20px) */
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    font-family: var(--font-sans);
+}
+
+.demand-container {
+    width: 100%;
+    max-width: 1400px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+    height: calc(100vh - 140px); /* 80px Nav + 40px Padding + 20px Buffer */
+}
+
+/* History Column */
+.demand-history-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    width: 400px;
+}
+
+.demand-history-column > .section-header { flex-shrink: 0; }
+.demand-history-column > .filter-controls { flex-shrink: 0; }
+
+.demand-section-title {
+    font-family: var(--font-serif);
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--color-text);
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.demand-history-list-container {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.demand-history-list-container::-webkit-scrollbar { width: 6px; }
+.demand-history-list-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+.demand-history-list-container::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 10px; opacity: 0.5; }
+
+.demand-item-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid transparent;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.demand-item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    border-color: rgba(35, 100, 170, 0.1);
+}
+
+.demand-item-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: var(--color-accent);
+    border-radius: 0 2px 2px 0;
+}
+
+/* Card actions */
+.demand-card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.demand-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.find-matches-btn {
+    background: rgba(35, 100, 170, 0.08);
+    color: var(--color-primary);
+    flex: 1;
+}
+
+.find-matches-btn:hover {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(35, 100, 170, 0.3);
+}
+
+.delete-btn {
+    background: rgba(229, 62, 62, 0.08);
+    color: #e53e3e;
+}
+
+.delete-btn:hover {
+    background: #e53e3e;
+    color: white;
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+/* Create Column */
+.demand-create-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    height: 100%;
+    overflow: hidden;
+    width: 1000px;
+}
+
+@media (max-width: 1100px) {
+    .demand-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+    }
+    .demand-history-column, .demand-create-column {
+        height: auto;
+        overflow: visible;
+        width: 100%;
+    }
+    .demand-history-list-container, .form-scroll-content {
+        height: 500px;
+    }
+}

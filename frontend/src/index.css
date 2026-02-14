@@ -1,6 +1,24 @@
 :root {
+  /* Fonts */
   --font-serif: 'Merriweather', serif;
   --font-sans: 'Lato', sans-serif;
+
+  /* Colors */
+  --color-primary: #2364AA;
+  --color-secondary: #73BFB8;
+  --color-accent: #EA7317;
+  --color-text: #2c3e50;
+  --color-text-light: #7f8c8d;
+  --color-bg: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+  --card-bg: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.2);
+
+  /* Shadows & Radius */
+  --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+  --border-radius-sm: 12px;
+  --border-radius-md: 20px;
+  --border-radius-lg: 30px;
 }
 
 body {

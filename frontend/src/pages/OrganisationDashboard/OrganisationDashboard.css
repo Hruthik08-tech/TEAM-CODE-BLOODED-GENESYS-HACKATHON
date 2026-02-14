@@ -13,10 +13,10 @@
 }
 
 .org-page-wrapper {
-    min-height: 100vh;
     width: 100%;
-    background: #f0f4f8; /* Softer neutral background */
-    padding: 100px 40px 40px; /* Top padding for Navbar */
+    /* Background handled by AppLayout */
+    /* Padding handled by AppLayout */
+    padding: 0;
     box-sizing: border-box;
     display: flex;
     justify-content: center;

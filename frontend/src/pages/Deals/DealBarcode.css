@@ -1,0 +1,209 @@
+/* ============================================================
+   DealBarcode Page
+   ============================================================ */
+
+.deal-barcode-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    font-family: var(--font-sans);
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-primary);
+    cursor: pointer;
+    padding: 8px 0;
+    transition: opacity 0.2s ease;
+    width: fit-content;
+}
+
+.back-btn:hover {
+    opacity: 0.7;
+}
+
+.barcode-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+/* QR Card */
+.barcode-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    text-align: center;
+}
+
+.barcode-card-title {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.barcode-card-subtitle {
+    font-size: 15px;
+    color: var(--color-text-light);
+    font-weight: 500;
+    margin: 6px 0 0;
+}
+
+.qr-code-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.qr-frame {
+    padding: 24px;
+    background: white;
+    border-radius: 20px;
+    border: 3px dashed #e1e8ed;
+    display: inline-block;
+}
+
+.qr-instruction {
+    font-size: 14px;
+    color: var(--color-text-light);
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Verify link */
+.verify-link-section {
+    text-align: left;
+}
+
+.verify-link-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.verify-link-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 2px solid #e1e8ed;
+}
+
+.verify-link-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--color-text);
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.copy-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: var(--color-primary);
+    color: white;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.copy-link-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(35, 100, 170, 0.3);
+}
+
+/* Deal info panel */
+.barcode-deal-info {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--card-shadow);
+}
+
+.deal-info-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.deal-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.deal-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+}
+
+.deal-info-item:hover {
+    background: #f8fafc;
+}
+
+.deal-info-item.highlight {
+    background: linear-gradient(135deg, rgba(35, 100, 170, 0.06) 0%, rgba(115, 191, 184, 0.06) 100%);
+    border: 1px solid rgba(35, 100, 170, 0.1);
+}
+
+.deal-info-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.deal-info-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.deal-info-item.highlight .deal-info-value {
+    color: var(--color-primary);
+    font-size: 18px;
+    font-family: var(--font-serif);
+}
+
+@media (max-width: 900px) {
+    .barcode-content {
+        grid-template-columns: 1fr;
+    }
+}
