@@ -1,3 +1,5 @@
+""" Database Table Creation """ 
+
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -6,6 +8,7 @@ from datetime import datetime
 Base = declarative_base()
 
 
+# All this will be found from get request to the database 
 class Organization(Base):
     """Organization model - represents companies registered on the platform"""
     __tablename__ = "organization"

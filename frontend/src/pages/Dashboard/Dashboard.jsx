@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx';
 import './Dashboard.css';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const orgName = localStorage.getItem('org_name') || 'My Organisation';
+    const { user } = useAuth();
+    const orgName = user?.org_name || 'My Organisation';
 
     const stats = [
         { label: 'Active Supplies', value: 12, color: '#2364AA', icon: (

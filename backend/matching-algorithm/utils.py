@@ -1,3 +1,5 @@
+# Used for calculation of the score 
+
 import math
 from typing import Tuple
 import Levenshtein

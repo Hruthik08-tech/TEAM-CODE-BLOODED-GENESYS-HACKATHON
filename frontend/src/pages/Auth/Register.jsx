@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx';
 import './Register.css';
 
 const Register = () => {
     const navigate = useNavigate();
+    const { register, login } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
@@ -57,13 +59,30 @@ const Register = () => {
             return;
         }
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            localStorage.setItem('auth_token', 'mock-token-' + Date.now());
-            localStorage.setItem('org_name', formData.orgName);
-            setIsLoading(false);
+        try {
+            await register({
+                org_name:     formData.orgName,
+                email:        formData.email,
+                password:     formData.password,
+                phone_number: formData.phone,
+                address:      formData.address,
+                city:         formData.city,
+                state:        formData.state,
+                country:      formData.country,
+                postal_code:  formData.postalCode,
+                description:  formData.description || null,
+                website_url:  formData.website || null,
+                latitude:     0.0,
+                longitude:    0.0,
+            });
+            // Auto-login after successful registration
+            await login(formData.email, formData.password);
             navigate('/dashboard');
-        }, 1500);
+        } catch (err) {
+            setErrors({ orgName: err.message || 'Registration failed. Please try again.' });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

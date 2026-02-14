@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext.jsx';
 import './Login.css';
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
@@ -26,13 +28,14 @@ const Login = () => {
             return;
         }
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            localStorage.setItem('auth_token', 'mock-token-' + Date.now());
-            localStorage.setItem('org_name', 'Demo Organisation');
-            setIsLoading(false);
+        try {
+            await login(formData.email, formData.password);
             navigate('/dashboard');
-        }, 1200);
+        } catch (err) {
+            setError(err.message || 'Login failed. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

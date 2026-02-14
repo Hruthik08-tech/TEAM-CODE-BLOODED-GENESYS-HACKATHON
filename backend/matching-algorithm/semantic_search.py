@@ -1,4 +1,5 @@
 """
+Main Algorithm 
 Semantic Search Module for Waste Exchange Matching
 
 This module uses sentence transformers to understand semantic similarity
