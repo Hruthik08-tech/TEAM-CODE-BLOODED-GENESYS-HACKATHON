@@ -15,7 +15,6 @@ import Map from './pages/Map.jsx';
 import OrganisationDashboard from './pages/OrganisationDashboard/index.jsx';
 import Supply from './pages/Supply/Supply.jsx';
 import Demand from './pages/Demand/Demand.jsx';
-import MatchResults from './pages/MatchResults/MatchResults.jsx';
 import Requests from './pages/Requests/Requests.jsx';
 import RoomList from './pages/BusinessRoom/RoomList.jsx';
 import BusinessRoom from './pages/BusinessRoom/BusinessRoom.jsx';
@@ -61,7 +60,7 @@ const AppRoutes = () => {
         <Route path="/organisation" element={<ProtectedRoute><OrganisationDashboard /></ProtectedRoute>} />
         <Route path="/supply" element={<ProtectedRoute><Supply /></ProtectedRoute>} />
         <Route path="/demand" element={<ProtectedRoute><Demand /></ProtectedRoute>} />
-        <Route path="/match-results" element={<ProtectedRoute><MatchResults /></ProtectedRoute>} />
+
         <Route path="/requests" element={<ProtectedRoute><Requests /></ProtectedRoute>} />
         <Route path="/rooms" element={<ProtectedRoute><RoomList /></ProtectedRoute>} />
         <Route path="/rooms/:id" element={<ProtectedRoute><BusinessRoom /></ProtectedRoute>} />
