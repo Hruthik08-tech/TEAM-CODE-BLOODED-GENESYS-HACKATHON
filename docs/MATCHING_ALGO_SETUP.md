@@ -50,3 +50,34 @@ docker-compose up -d
 ```
 
 The installation time for `matching-worker` should now be seconds instead of minutes.
+
+## Troubleshooting
+
+### "API Key Not Found"
+
+Ensure you have added your API key to the `.env` file and restarted the worker:
+
+```bash
+docker-compose restart matching-worker
+```
+
+### "No Matches Found"
+
+- Check if the database is seeded correctly:
+
+```bash
+docker exec genysis_mysql mysql -uroot -p<YOUR_PASSWORD> genesys \
+  -e "SELECT COUNT(*) AS supplies FROM org_supply; SELECT COUNT(*) AS demands FROM org_demand;"
+```
+
+- Ensure the worker is running:
+
+```bash
+docker ps | grep genysis_worker
+```
+
+- Check worker logs:
+
+```bash
+docker logs genysis_worker --tail 20
+```

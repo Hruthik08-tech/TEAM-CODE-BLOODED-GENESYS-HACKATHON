@@ -2,6 +2,10 @@
 
 A full-stack supply chain management platform built with React, Express, MySQL, and Redis.
 
+## Overview
+
+GENYSIS is a platform designed to connect suppliers and seekers in the supply chain ecosystem. It leverages modern technologies to provide efficient matching, real-time updates, and a seamless user experience.
+
 ## Tech Stack
 
 | Layer              | Technology                                      |
@@ -14,106 +18,118 @@ A full-stack supply chain management platform built with React, Express, MySQL, 
 
 ```
 GENYSIS/
-├── frontend/          # React + Vite SPA
+├── .env                          # Environment variables (git-ignored)
+├── .env.example                  # Template for .env
+├── docker-compose.yml            # All 6 services orchestration
+├── RUN_GUIDE.md                  # Comprehensive run guide
+├── README.md                     # Project overview
+│
+├── docker/
+│   └── init/                     # MySQL auto-init scripts
+│       ├── 00_schema.sql         # Full schema (18 tables)
+│       ├── 01_seed_organisations.sql  # 20 test organisations
+│       └── 02_seed_test_data.sql      # Categories + supplies + demands
+│
+├── nginx/
+│   └── nginx.conf                # Reverse proxy config
+│
+├── backend/
+│   ├── connections/              # MySQL & Redis connection setup
+│   ├── routes/                   # API route handlers
+│   ├── middleware/               # Express middleware
+│   └── server.js                 # Entry point
+│
+├── frontend/
 │   ├── src/
-│   │   ├── components/   # Reusable UI components (Navbar, MapPopup, etc.)
-│   │   ├── pages/        # Page-level components (Map, Supply, Dashboard)
-│   │   └── utils/        # Utility functions
+│   │   ├── components/           # Reusable UI components
+│   │   ├── pages/                # Page-level components
+│   │   └── utils/                # Utility functions
 │   └── ...
-├── backend/           # Express API server
-│   ├── connections/      # MySQL & Redis connection setup
-│   ├── routes/           # API route handlers
-│   ├── middleware/        # Express middleware
-│   └── server.js         # Entry point
-├── planning/          # Requirements & planning docs
-├── docker-compose.yml # Full-stack Docker orchestration
-└── README.md
+└── planning/                     # Requirements & planning docs
 ```
 
 ## Getting Started
 
+Follow these steps to set up and run the application using Docker.
+
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18+)
-- [MySQL](https://www.mysql.com/) 8.0+
-- [Redis](https://redis.io/) 7+
-- [Docker](https://www.docker.com/) (optional, for containerized setup)
+Ensure you have the following installed on your system:
 
-### Local Development
+- [Docker](https://www.docker.com/) (v20+)
+- [Docker Compose](https://docs.docker.com/compose/) (v2.x)
+- [Git](https://git-scm.com/)
+
+### Setup and Run
 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/Hruthik08-tech/TEAM-CODE-BLOODED-GENESYS-HACKATHON.git
-   cd TEAM-CODE-BLOODED-GENESYS-HACKATHON
+   git clone https://github.com/Hruthik08-tech/TEAM-CODE-BLOODED-GENYSYS-HACKATHON.git
+   cd TEAM-CODE-BLOODED-GENYSYS-HACKATHON
    ```
 
-2. **Backend setup**
-
-   ```bash
-   cd backend
-   cp .env.example .env
-   # Edit .env with your database credentials
-   npm install
-   npm run dev
-   ```
-
-3. **Frontend setup**
-   ```bash
-   cd frontend
-   cp .env.example .env
-   npm install
-   npm run dev
-   ```
-
-### Docker Setup
-
-1. **Configure environment**
+2. **Configure environment**
 
    ```bash
    cp .env.example .env
-   # Edit .env with your desired passwords
+   # Edit .env with your desired passwords and API keys
    ```
 
-2. **Start all services**
+3. **Start all services**
 
    ```bash
    docker-compose up --build
    ```
 
-   This starts:
+   This starts the following services:
+
    - **MySQL** on port `3307`
    - **Redis** on port `6379`
    - **Backend API** on port `3000`
    - **Frontend** on port `80`
 
-## Environment Variables
+4. **Verify services**
 
-### Root (`.env`) — Docker Compose
+   Check that all containers are running:
 
-| Variable              | Description                        |
-| --------------------- | ---------------------------------- |
-| `MYSQL_ROOT_PASSWORD` | MySQL root password                |
-| `MYSQL_DATABASE`      | Database name (default: `genesys`) |
+   ```bash
+   docker ps
+   ```
 
-### Backend (`backend/.env`)
+5. **Access the application**
 
-| Variable      | Description                                            | Default |
-| ------------- | ------------------------------------------------------ | ------- |
-| `PORT`        | API server port                                        | `3000`  |
-| `DB_HOST`     | MySQL host (`mysql` for Docker, `localhost` for local) | —       |
-| `DB_USER`     | MySQL user                                             | —       |
-| `DB_PASSWORD` | MySQL password                                         | —       |
-| `DB_NAME`     | Database name                                          | —       |
-| `REDIS_HOST`  | Redis host (`redis` for Docker, `localhost` for local) | —       |
-| `REDIS_PORT`  | Redis port                                             | `6379`  |
+   - Frontend: [http://localhost](http://localhost)
+   - Backend API Health Check: [http://localhost:3000/api/health](http://localhost:3000/api/health)
 
-### Frontend (`frontend/.env`)
+## Troubleshooting
 
-| Variable            | Description     | Default                 |
-| ------------------- | --------------- | ----------------------- |
-| `VITE_API_BASE_URL` | Backend API URL | `http://localhost:3000` |
+### Common Issues
+
+1. **Docker containers not starting**
+
+   Ensure Docker is running and retry:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+2. **Database connection errors**
+
+   Verify MySQL credentials in `.env` and ensure the MySQL container is running:
+
+   ```bash
+   docker ps | grep mysql
+   ```
+
+3. **Redis connection errors**
+
+   Restart the Redis container:
+
+   ```bash
+   docker-compose restart redis
+   ```
 
 ## License
 
-ISC
+This project is licensed under the ISC License.
