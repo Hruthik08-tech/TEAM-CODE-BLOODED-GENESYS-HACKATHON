@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { api } from '../../utils/api';
-import { useAuth } from '../../context/AuthContext';
+import { roomService } from '../../services/index.js';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { formatDate, formatTimeClock } from '../../utils/dateFormatters.js';
 import './BusinessRoom.css';
 
 const BusinessRoom = () => {
@@ -29,7 +30,7 @@ const BusinessRoom = () => {
 
     const fetchRoom = async () => {
         try {
-            const data = await api.get(`/rooms/${id}`);
+            const data = await roomService.fetchRoom(id);
             setRoom(data);
         } catch (err) {
             console.error('Failed to fetch room:', err);
@@ -40,7 +41,7 @@ const BusinessRoom = () => {
 
     const fetchMessages = async () => {
         try {
-            const data = await api.get(`/rooms/${id}/messages`);
+            const data = await roomService.fetchMessages(id);
             setMessages(data);
         } catch (err) {
             console.error('Failed to fetch messages:', err);
@@ -74,7 +75,7 @@ const BusinessRoom = () => {
     /* ---- Handlers ---- */
     const handleMarkStatus = async (status) => {
         try {
-            const data = await api.patch(`/rooms/${id}/status`, { status });
+            const data = await roomService.updateRoomStatus(id, status);
             setRoom(prev => ({ ...prev, status }));
             if (status === 'success' && data.deal_id) {
                 setTimeout(() => {
@@ -240,7 +241,7 @@ const BusinessRoom = () => {
                                         <div key={msg.message_id} className={`chat-bubble ${isOwn ? 'own-message' : ''}`}>
                                             <div className="bubble-header">
                                                 <span className="bubble-sender">{msg.sender_name}</span>
-                                                <span className="bubble-timestamp">{formatTime(msg.created_at)}</span>
+                                                <span className="bubble-timestamp">{formatTimeClock(msg.created_at)}</span>
                                             </div>
                                             <p className="bubble-text">{msg.content}</p>
                                         </div>

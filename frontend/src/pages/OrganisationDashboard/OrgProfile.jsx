@@ -1,12 +1,8 @@
 import React from 'react';
+import { formatDate } from '../../utils/dateFormatters.js';
 
 const OrgProfile = ({ user }) => {
-    const formatDate = (dateStr) => {
-        if (!dateStr) return '—';
-        return new Date(dateStr).toLocaleDateString('en-IN', {
-            day: 'numeric', month: 'short', year: 'numeric',
-        });
-    };
+    const formatDateOrDash = (dateStr) => (!dateStr ? '—' : formatDate(dateStr));
 
     return (
         <div className="org-profile-combined-box">
@@ -64,7 +60,7 @@ const OrgProfile = ({ user }) => {
                 </div>
                 
                 <div className="info-footer">
-                    created on: {formatDate(user?.created_at)}
+                    created on: {formatDateOrDash(user?.created_at)}
                 </div>
             </div>
         </div>

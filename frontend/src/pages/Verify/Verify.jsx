@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { formatDateTime } from '../../utils/dateFormatters.js';
 import './Verify.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
@@ -94,7 +95,7 @@ const Verify = () => {
                             </div>
                             <div className="vd-row">
                                 <span className="vd-label">Created</span>
-                                <span className="vd-value">{formatDate(verifyResult.deal.created_at)}</span>
+                                <span className="vd-value">{formatDateTime(verifyResult.deal.created_at)}</span>
                             </div>
                         </div>
                     </div>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
-import { api } from '../../utils/api';
+import { dealService } from '../../services/index.js';
+import { formatDate } from '../../utils/dateFormatters.js';
 import './DealBarcode.css';
 
 const DealBarcode = () => {
     const { dealId: id } = useParams();
+    const navigate = useNavigate();
     const [deal, setDeal] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [copied, setCopied] = useState(false);
@@ -36,12 +38,6 @@ const DealBarcode = () => {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         }
-    };
-
-    const formatDate = (iso) => {
-        if (!iso) return '';
-        const d = new Date(iso);
-        return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
     if (isLoading) {

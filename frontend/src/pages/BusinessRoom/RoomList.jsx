@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../utils/api';
+import { roomService } from '../../services/index.js';
+import { timeAgo } from '../../utils/dateFormatters.js';
 import './RoomList.css';
 
 const RoomList = () => {
@@ -17,7 +18,7 @@ const RoomList = () => {
     const fetchRooms = async () => {
         setIsLoading(true);
         try {
-            const data = await api.get('/rooms');
+            const data = await roomService.fetchRooms();
             setRooms(data);
         } catch (err) {
             console.error('Failed to fetch rooms:', err);
@@ -42,15 +43,8 @@ const RoomList = () => {
     };
 
     const getTimeAgo = (dateStr) => {
-        if (!dateStr) return '';
-        const diff = Date.now() - new Date(dateStr).getTime();
-        const mins = Math.floor(diff / 60000);
-        if (mins < 1) return 'just now';
-        if (mins < 60) return `${mins} min ago`;
-        const hours = Math.floor(mins / 60);
-        if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-        const days = Math.floor(hours / 24);
-        return `${days} day${days > 1 ? 's' : ''} ago`;
+        const result = timeAgo(dateStr);
+        return result === 'Just now' ? 'just now' : result;
     };
 
     const filteredRooms = rooms.filter(room => {

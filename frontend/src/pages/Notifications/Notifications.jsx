@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { api } from '../../utils/api';
+import { notificationService } from '../../services/index.js';
+import { timeAgo } from '../../utils/dateFormatters.js';
 import './Notifications.css';
 
 const Notifications = () => {
@@ -14,7 +15,7 @@ const Notifications = () => {
     const fetchNotifications = async () => {
         setIsLoading(true);
         try {
-            const data = await api.get('/notifications');
+            const data = await notificationService.fetchNotifications();
             setNotifications(data);
         } catch (err) {
             console.error('Failed to fetch notifications:', err);
@@ -25,7 +26,7 @@ const Notifications = () => {
 
     const handleMarkRead = async (id) => {
         try {
-            await api.patch(`/notifications/${id}/read`);
+            await notificationService.markAsRead(id);
             setNotifications(prev =>
                 prev.map(n => n.notification_id === id ? { ...n, is_read: true } : n)
             );
@@ -45,7 +46,7 @@ const Notifications = () => {
 
     const handleDelete = async (id) => {
         try {
-            await api.delete(`/notifications/${id}`);
+            await notificationService.deleteNotification(id);
             setNotifications(prev => prev.filter(n => n.notification_id !== id));
         } catch (err) {
             console.error('Failed to delete notification:', err);
@@ -180,7 +181,7 @@ const Notifications = () => {
                             <div className="notif-card-content">
                                 <div className="notif-card-top-row">
                                     <h3 className="notif-card-title">{notif.title}</h3>
-                                    <span className="notif-card-time">{formatTime(notif.created_at)}</span>
+                                    <span className="notif-card-time">{timeAgo(notif.created_at)}</span>
                                 </div>
                                 <p className="notif-card-message" dangerouslySetInnerHTML={{ __html: notif.message }} />
                             </div>

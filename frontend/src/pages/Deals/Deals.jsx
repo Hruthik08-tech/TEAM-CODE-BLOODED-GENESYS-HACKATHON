@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../utils/api';
+import { dealService } from '../../services/index.js';
+import { formatDate } from '../../utils/dateFormatters.js';
 import './Deals.css';
 
 const Deals = () => {
@@ -16,18 +17,13 @@ const Deals = () => {
     const fetchDeals = async () => {
         setIsLoading(true);
         try {
-            const data = await api.get('/deals');
+            const data = await dealService.fetchDeals();
             setDeals(data);
         } catch (err) {
             console.error('Failed to fetch deals:', err);
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const formatDate = (iso) => {
-        const d = new Date(iso);
-        return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
     const stats = {

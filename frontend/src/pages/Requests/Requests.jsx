@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../utils/api';
+import { requestService } from '../../services/index.js';
+import { formatDate } from '../../utils/dateFormatters.js';
 import './Requests.css';
 
 const Requests = () => {
@@ -16,10 +17,10 @@ const Requests = () => {
         fetchRequests();
     }, []);
 
-    const fetchRequests = async () => {
+    const fetchRequests = useCallback(async () => {
         setIsLoading(true);
         try {
-            const data = await api.get('/requests');
+            const data = await requestService.fetchRequests();
             setSentRequests(data.sent || []);
             setReceivedRequests(data.received || []);
         } catch (err) {
@@ -27,11 +28,11 @@ const Requests = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     const handleAccept = async (id) => {
         try {
-            await api.patch(`/requests/${id}/accept`);
+            await requestService.acceptRequest(id);
             setReceivedRequests(prev =>
                 prev.map(r => r.request_id === id ? { ...r, status: 'accepted' } : r)
             );
@@ -72,11 +73,6 @@ const Requests = () => {
     };
 
     const getStatusClass = (status) => `req-status-${status}`;
-
-    const formatDate = (iso) => {
-        const d = new Date(iso);
-        return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-    };
 
     const requests = activeTab === 'received' ? receivedRequests : sentRequests;
     const pendingCount = receivedRequests.filter(r => r.status === 'pending').length;
